@@ -457,8 +457,8 @@ drawKids(); calc();
 
 /* ================= 成本 ================= */
 const COST = {
-  wide: { n: 185, ni: '171–197', g: 3777, c1: 837, c1i: '736–946', n2: 108, c2: 555, c2i: '476–642', nn: 644, nn2: 380 },
-  cons: { n: 146, ni: '136–157', g: 3701, c1: 651, c1i: '559–739', n2: 85, c2: 428, c2i: '359–504', nn: 513, nn2: 299 },
+  wide: { n: 185, ni: '171–197', hd: 49, hdi: '41–56', g: 3777, c1: 837, c1i: '736–946', n2: 108, c2: 555, c2i: '476–642', nn: 644, nn2: 380 },
+  cons: { n: 146, ni: '136–157', hd: 44, hdi: '37–51', g: 3701, c1: 651, c1i: '559–739', n2: 85, c2: 428, c2i: '359–504', nn: 513, nn2: 299 },
 };
 const MAXC = 1500;
 function cost(k) {
@@ -466,7 +466,7 @@ function cost(k) {
   $('#b1').style.width = (d.c1 / MAXC * 100) + '%'; $('#b1').textContent = `第一階段 ${d.c1} 億`;
   $('#b2').style.width = (d.c2 / MAXC * 100) + '%'; $('#b2').textContent = `第二階段 ${d.c2} 億`;
   $('#axis').innerHTML = [0, 500, 1000].map(v => `<span style="left:${v / MAXC * 100}%${v ? '' : ';transform:none'}">${fmt(v)}</span>`).join('') + `<span style="left:100%;transform:translateX(-100%)">1,500 億元/年</span>`;
-  $('#costText').innerHTML = `<b>第一步</b>：${d.n} 萬人改領津貼，每人每月平均補 <b class="num">${fmt(d.g)}</b> 元，一年 <b class="num">${d.c1}</b> 億。<b>第二步</b>：改領後仍有 ${d.n2} 萬人低於最低生活費，補到最低生活費一年再 <b class="num">${d.c2}</b> 億。<br>兩步合計，<b>一年約 <span class="pen num">${fmt(d.c1 + d.c2)}</span> 億元</b>。<br><span class="muted">這是只看收入推算的上限：沒算資產與同住子女的支持，實際需求會小很多。</span>`;
+  $('#costText').innerHTML = `<b>第一步</b>：${d.n} 萬人改領津貼，每人每月平均補 <b class="num">${fmt(d.g)}</b> 元，一年 <b class="num">${d.c1}</b> 億。<b>第二步</b>：改領後仍有 ${d.n2} 萬人低於最低生活費，補到最低生活費一年再 <b class="num">${d.c2}</b> 億。<br>兩步合計，<b>一年約 <span class="pen num">${fmt(d.c1 + d.c2)}</span> 億元</b>。<br><span class="muted">這是只看收入推算的上限：其中自評生活有困難的約 <b class="num">${d.hd}</b> 萬人（95% 信賴區間 ${d.hdi} 萬），才是真正改善生計的人；其餘多半與子女同住，或有沒算到的資產。</span>`;
   $('#ptab').innerHTML = `
     <tr><td><b>第一階段</b></td><td>不再推算子女收入，只算子女實際給的錢；讓符合資格的人改領中低收入老人津貼（與國民年金、老農津貼擇一，政府只多付差額）</td><td>被隱藏的中低收入戶 ${d.n} 萬人<br><span class="muted">95% CI ${d.ni} 萬，n=${d.nn}</span></td><td class="num"><b>${d.c1} 億</b><br><span class="muted">${d.c1i} 億</span></td></tr>
     <tr><td><b>第二階段</b></td><td>改領後仍低於最低生活費的，補到最低生活費（包含原本就有領補助的人）</td><td>仍不足者 ${d.n2} 萬人<br><span class="muted">n=${d.nn2}</span></td><td class="num"><b>${d.c2} 億</b><br><span class="muted">${d.c2i} 億</span></td></tr>`;

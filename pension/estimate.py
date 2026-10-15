@@ -111,7 +111,10 @@ def hidden_poor(d, w, drop=None):
     g = np.maximum(A_ - np.where(d.type.isin(['老農津貼', '國民年金']), d.ben, 0), 0)
     H = P0 & ~S & (A_ > 0) & ok
     G = np.where(P0 & ok, np.maximum(L_ - y - np.where(A_ > 0, g, 0), 0), 0)
-    return {'隱藏中低收入(萬)': POP * np.average(H, weights=w), '每人每月增加(元)': np.average(g[H], weights=w[H]) if H.any() else 0.0,
+    Hh = H & (d.hard.values == 1)                                            # 其中自評生活費有困難(k33 = 略有困難或相當困難)
+    return {'隱藏中低收入(萬)': POP * np.average(H, weights=w), '其中自評有困難(萬)': POP * np.average(Hh, weights=w),
+            '自評有困難佔符合者(%)': 100 * np.average(Hh, weights=w) / np.average(H, weights=w),
+            '每人每月增加(元)': np.average(g[H], weights=w[H]) if H.any() else 0.0,
             '第一階段(億)': POP * 1e4 * np.average(np.where(H, g, 0), weights=w) * 12 / 1e8,
             '仍不足(萬)': POP * np.average(G > 0, weights=w), '第二階段(億)': POP * 1e4 * np.average(G, weights=w) * 12 / 1e8}
 
