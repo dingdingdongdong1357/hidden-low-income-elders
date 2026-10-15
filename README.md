@@ -35,7 +35,9 @@
 │  ├─ analysis_pipeline_result.txt   全流程的文字輸出
 │  └─ pipeline_result.json           畫圖與推估用的數字(僅彙總值)
 ├─ figures/              報告的圖 1–3 與 fig_bootstrap.png
-└─ report/               參賽報告 PDF
+├─ report/               參賽報告 PDF
+├─ slides/               簡報 PDF(26 頁)
+└─ docs/                 互動頁(GitHub Pages)
 ```
 
 ## 如何重現
