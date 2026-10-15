@@ -98,7 +98,7 @@ input[type="range"] { width: 100%; accent-color: var(--pen); }
 .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
 .dots i.on { background: var(--ink); }
 
-/* ---- 阿嬤的帳單 ---- */
+/* ---- 黃伯伯的帳單 ---- */
 .persona { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; border: 1px dashed var(--rule); border-radius: 6px; padding: 14px 16px; }
 .persona .face { width: 56px; height: 56px; border-radius: 50%; background: var(--pen-soft); display: grid; place-items: center; font-family: var(--f-display); font-size: 1.5rem; color: var(--pen); }
 .calc { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 28px; align-items: start; }
@@ -201,15 +201,15 @@ td.num { text-align: right; white-space: nowrap; }
   </div>
 </section>
 
-<!-- ================= 阿嬤的帳單 ================= -->
+<!-- ================= 黃伯伯的帳單 ================= -->
 <section class="sheet" aria-labelledby="q2">
-  <span class="qtag">一、阿嬤的帳單</span>
-  <h2 id="q2">孩子每月只給阿嬤 3,000 元，為什麼政府說她「不窮」？</h2>
+  <span class="qtag">一、黃伯伯的帳單</span>
+  <h2 id="q2">孩子每月只給黃伯伯 3,000 元，為什麼政府說他「不窮」？</h2>
   <div class="persona">
-    <div class="face" aria-hidden="true">嬤</div>
-    <p>認識一下<b>阿嬤</b>（虛構人物）：75 歲，一個人住在臺灣的非直轄市縣市。她沒有按月領的年金，每月有國民年金的基本保證年金，偶爾做點資源回收。三個孩子都有工作，但各自要養家，<b>三個人加起來每月給她 3,000 元</b>。</p>
+    <div class="face" aria-hidden="true">伯</div>
+    <p>認識一下<b>黃伯伯</b>（虛構人物）：75 歲，一個人住在臺灣的非直轄市縣市。他沒有按月領的年金，每月有國民年金的基本保證年金，偶爾做點資源回收。三個孩子都有工作，但各自要養家，<b>三個人加起來每月給他 3,000 元</b>。</p>
   </div>
-  <p>她可以領每月 8,329 元的中低收入老人生活津貼嗎？動動左邊的條件，看看兩種算法有什麼不同。</p>
+  <p>他可以領每月 8,329 元的中低收入老人生活津貼嗎？動動左邊的條件，看看兩種算法有什麼不同。</p>
 
   <div class="calc">
     <div class="ctrls">
@@ -223,7 +223,7 @@ td.num { text-align: right; white-space: nowrap; }
         </div>
       </div>
       <div class="ctrl">
-        <label for="ben"><span>阿嬤現在領的津貼</span></label>
+        <label for="ben"><span>黃伯伯現在領的津貼</span></label>
         <select id="ben">
           <option value="4049">國民年金基本保證年金 4,049 元</option>
           <option value="8110">老農津貼 8,110 元</option>
@@ -231,11 +231,11 @@ td.num { text-align: right; white-space: nowrap; }
         </select>
       </div>
       <div class="ctrl">
-        <label for="work"><span>阿嬤自己的收入（資源回收、零工）</span><output id="workOut">1,000 元</output></label>
+        <label for="work"><span>黃伯伯自己的收入（資源回收、零工）</span><output id="workOut">1,000 元</output></label>
         <input type="range" id="work" min="0" max="10000" step="500" value="1000">
       </div>
       <div class="ctrl">
-        <label for="give"><span>孩子們<b>實際</b>每月給阿嬤（合計）</span><output id="giveOut">3,000 元</output></label>
+        <label for="give"><span>孩子們<b>實際</b>每月給黃伯伯（合計）</span><output id="giveOut">3,000 元</output></label>
         <input type="range" id="give" min="0" max="20000" step="500" value="3000">
       </div>
       <div class="ctrl">
@@ -272,8 +272,8 @@ td.num { text-align: right; white-space: nowrap; }
 <!-- ================= 成本 ================= -->
 <section class="sheet" aria-labelledby="q3">
   <span class="qtag">二、國家養得起嗎？</span>
-  <h2 id="q3">把像阿嬤這樣的長輩補起來，一年要多少錢？</h2>
-  <p>分兩步補：<b>先讓她們領到本來就該有的津貼</b>，再把仍不夠的人<b>補到最低生活費</b>。</p>
+  <h2 id="q3">把像黃伯伯這樣的長輩補起來，一年要多少錢？</h2>
+  <p>分兩步補：<b>先讓他們領到本來就該有的津貼</b>，再把仍不夠的人<b>補到最低生活費</b>。</p>
   <div class="row">
     <div class="seg" id="scen" role="group" aria-label="估計方式">
       <button type="button" data-s="wide" aria-pressed="true">寬鬆估計</button>
@@ -376,7 +376,7 @@ function render() {
   $('#legend').innerHTML = S.legend.map(([s, t]) => `<span><i class="sw" style="background:${COLORS[s]}"></i>${t}</span>`).join('');
   $('#guessBox').style.display = step === 0 ? '' : 'none';
   $('#prev').disabled = step === 0;
-  $('#next').textContent = step === 0 ? '揭曉' : step === STEPS.length - 1 ? '看阿嬤的故事 ↓' : '下一步';
+  $('#next').textContent = step === 0 ? '揭曉' : step === STEPS.length - 1 ? '看黃伯伯的故事 ↓' : '下一步';
   [...$('#dots').children].forEach((d, i) => d.classList.toggle('on', i === step));
 }
 $('#guess').addEventListener('input', () => { showGuess(); });
@@ -387,7 +387,7 @@ $('#next').addEventListener('click', () => {
 $('#prev').addEventListener('click', () => { if (step > 0) { step--; render(); } });
 render();
 
-/* ================= 阿嬤的帳單 ================= */
+/* ================= 黃伯伯的帳單 ================= */
 const L = 14230, T1 = 1.5 * L, T2 = 2.5 * L, MINW = 27470, FULL = 8329, HALF = 4164;
 const PRESETS = [
   { n: 3, kids: [[47000, false], [47000, false], [47000, false]] },
@@ -420,21 +420,21 @@ function calc() {
   const B = +$('#ben').value, W = +$('#work').value, C = +$('#give').value;
   const benName = { 4049: '國民年金基本保證年金', 8110: '老農津貼', 0: '津貼' }[B];
   $('#workOut').textContent = fmt(W) + ' 元'; $('#giveOut').textContent = fmt(C) + ' 元';
-  // 現行規定：阿嬤 + 每個孩子列入，收入加總除以人數
+  // 現行規定：黃伯伯 + 每個孩子列入，收入加總除以人數
   const ks = kids.slice(0, nKids), kidSum = ks.reduce((s, k) => s + kidVal(k), 0);
   const persons = 1 + nKids, pc = (W + B + kidSum) / persons, A0 = allow(pc), g0 = Math.max(A0 - B, 0);
-  let h = `<div class="ln"><span>阿嬤自己的收入 + ${benName}</span><span class="num">${fmt(W + B)}</span></div>`;
+  let h = `<div class="ln"><span>黃伯伯自己的收入 + ${benName}</span><span class="num">${fmt(W + B)}</span></div>`;
   ks.forEach((k, i) => h += `<div class="ln"><span>孩子${'一二三四'[i]}的月收入${k[1] ? '<span class="tag">沒工作，依基本工資推算</span>' : ''}</span><span class="num">${fmt(kidVal(k))}</span></div>`);
-  h += `<div class="ln"><span>÷ 全家 ${persons} 人（阿嬤 + ${nKids} 個孩子）</span><span class="num"></span></div>`;
+  h += `<div class="ln"><span>÷ 全家 ${persons} 人（黃伯伯 + ${nKids} 個孩子）</span><span class="num"></span></div>`;
   h += `<div class="ln tot"><span>每人每月</span><span class="num">${fmt(pc)}</span></div>`;
   h += A0 === 0 ? `<div class="verdict no"><span class="stamp">不符合</span> 超過 ${fmt(T2)} 元的上限</div>`
        : `<div class="verdict yes">符合：每月 ${fmt(A0)} 元${B ? `（改領後實際多 ${fmt(g0)} 元）` : ''}</div>`;
   $('#rCur').innerHTML = h;
-  // 本研究：只算孩子實際給的錢，阿嬤一個人
+  // 本研究：只算孩子實際給的錢，黃伯伯一個人
   const y = W + B + C, A1 = allow(y), g1 = Math.max(A1 - B, 0), gap = Math.max(L - y - g1, 0);
-  let r = `<div class="ln"><span>阿嬤自己的收入 + ${benName}</span><span class="num">${fmt(W + B)}</span></div>`;
+  let r = `<div class="ln"><span>黃伯伯自己的收入 + ${benName}</span><span class="num">${fmt(W + B)}</span></div>`;
   r += `<div class="ln"><span>孩子們實際給的錢</span><span class="num">${fmt(C)}</span></div>`;
-  r += `<div class="ln tot"><span>阿嬤每月真正可用的錢</span><span class="num">${fmt(y)}</span></div>`;
+  r += `<div class="ln tot"><span>黃伯伯每月真正可用的錢</span><span class="num">${fmt(y)}</span></div>`;
   r += A1 === 0 ? `<div class="verdict no">不符合：收入超過 ${fmt(T2)} 元</div>`
        : `<div class="verdict yes">符合：每月 ${fmt(A1)} 元</div>
           <div class="ln"><span><b>第一階段</b>：改領津貼，${B ? `放棄原本的 ${fmt(B)} 元，` : ''}每月實際多</span><span class="num">+${fmt(g1)}</span></div>
@@ -442,8 +442,8 @@ function calc() {
   $('#rNew').innerHTML = r;
   // 一句話
   let s;
-  if (A0 < A1) s = `阿嬤每月真正可用的錢只有 <b class="num">${fmt(y)}</b> 元，但在現行算法裡，她「每人每月有 <b class="num pen">${fmt(pc)}</b> 元」。<b>${A0 === 0 ? '有孩子，讓她一毛津貼都領不到' : '有孩子，讓她的津貼少了一半'}</b>${ks.some(k => k[1]) ? '，即使孩子沒工作，也照基本工資算' : ''}。`;
-  else if (A1 === 0) s = `阿嬤自己的錢已經超過標準，兩種算法都不符合。`;
+  if (A0 < A1) s = `黃伯伯每月真正可用的錢只有 <b class="num">${fmt(y)}</b> 元，但在現行算法裡，他「每人每月有 <b class="num pen">${fmt(pc)}</b> 元」。<b>${A0 === 0 ? '有孩子，讓他一毛津貼都領不到' : '有孩子，讓他的津貼少了一半'}</b>${ks.some(k => k[1]) ? '，即使孩子沒工作，也照基本工資算' : ''}。`;
+  else if (A1 === 0) s = `黃伯伯自己的錢已經超過標準，兩種算法都不符合。`;
   else s = `這個家庭裡，兩種算法的結果一樣。試試「三個上班的孩子」或「三個孩子都沒工作」。`;
   $('#shock').innerHTML = s;
 }
@@ -486,7 +486,7 @@ const CARDS = [
   { t: '不好意思開口', f: `<p>申請補助，等於承認「我很窮」、「孩子沒在養我」。要被認定，得讓社工到家訪視，家裡的關係攤在別人面前。</p><p>有些家庭甚至走上法院：依法律扶助基金會統計，106 年它受理的「免除扶養義務之訴」達 3,100 件，是該基金會家事案件中最多的一類。</p><p class="src">來源：監察院調查報告（2019）</p>`,
     b: `<p><span class="flag">英國</span>英國的 Pension Credit 是補足長輩收入的制度，但符合資格的人只有約 <b>65%</b> 去申請，最多 76 萬個家庭沒領（2022/23 年度）。</p><p>英國政府的做法：持續推廣，並試辦<b>主動寄信邀請</b>可能符合資格的長輩申請，把「自己去求」變成「政府來問」。</p>`,
     l: [['GOV.UK 申請率統計', 'https://www.gov.uk/government/statistics/income-related-benefits-estimates-of-take-up-financial-year-ending-2023/income-related-benefits-estimates-of-take-up-financial-year-ending-2023'], ['GOV.UK 邀請申請試辦', 'https://gov.uk/government/publications/pension-credit-invitation-to-claim-trial/423b0c09-59f4-48be-87cc-0bf70cae6a72']] },
-  { t: '有房子，不代表有錢', f: `<p>阿嬤住了一輩子的老房子，可能讓她的財產超過門檻。但房子不能拿來買菜。</p><p>反過來，也有長輩名下有好幾間房。我們的資料沒有問房地產，這是寬鬆估計可能高估的地方。</p>`,
+  { t: '有房子，不代表有錢', f: `<p>黃伯伯住了一輩子的老房子，可能讓他的財產超過門檻。但房子不能拿來買菜。</p><p>反過來，也有長輩名下有好幾間房。我們的資料沒有問房地產，這是寬鬆估計可能高估的地方。</p>`,
     b: `<p><span class="flag">澳洲</span>澳洲老年年金的資產審查<b>不計自住的房子</b>（以及房子所在的前 2 公頃土地）；出租、空置或借人住的房子才算。</p><p>這樣分開「自住」和「其他房產」，既不會逼長輩賣掉自己住的房子，也能排除真正有資產的人。</p>`,
     l: [['Services Australia：不動產資產', 'https://www.servicesaustralia.gov.au/individuals/services/centrelink/age-pension/who-can-get-it/assets-test/asset-types/real-estate-assets']] },
 ];
