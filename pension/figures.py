@@ -40,7 +40,7 @@ def save(f, n):
 def fig_bootstrap(Bt, est):
     """拔靴法:左 = 2,000 次重抽的(人數, 缺口)散布與等總額曲線;右 = 總金額的分布與兩種區間"""
     f = fig(9.4, 4.0)
-    title(f, '人數和每人金額在同一次重抽裡一起算,再相乘', f'{len(Bt):,} 次拔靴重抽的結果。每一點是一次重抽:橫軸為被隱藏的中低收入戶人數、縱軸為每人每月增加金額;右圖為相乘得到的第一階段每年成本')
+    title(f, '人數和每人金額，同一次重抽一起算再相乘', f'{len(Bt):,} 次拔靴重抽；左圖每點是一次重抽，右圖為相乘後的第一階段每年成本')
     ax = f.add_axes([0.07, 0.13, 0.42, 0.62]); style(ax, 'both')
     x, y, t = Bt['隱藏中低收入(萬)'], Bt['每人每月增加(元)'], Bt['第一階段(億)']
     lo, hi = t.quantile([0.025, 0.975])
@@ -55,13 +55,13 @@ def fig_bootstrap(Bt, est):
         else:                                                          # 從下邊界離開 → 標在下方
             ax.text(c / y0 * 1.01, y0 * 1.01, f'{tot:.0f} 億', fontsize=8.5, color=INK2, ha='left', va='bottom', bbox=dict(facecolor=SURF, edgecolor='none', pad=1))
     ax.set_xlim(x0, x1); ax.set_ylim(y0, y1)
-    ax.set_xlabel('被隱藏的中低收入戶(萬人)', fontsize=9.5, color=MUTED); ax.set_ylabel('每人每月增加(元)', fontsize=9.5, color=MUTED)
+    ax.set_xlabel('被隱藏的中低收入戶（萬人）', fontsize=9.5, color=MUTED); ax.set_ylabel('每人每月增加（元）', fontsize=9.5, color=MUTED)
     ax2 = f.add_axes([0.6, 0.13, 0.37, 0.62]); style(ax2, 'y')
     ax2.hist(t, bins=40, color=NOP, alpha=0.8)
     ax2.axvline(est['第一階段(億)'], color=INK, lw=1.2)
     for v in (lo, hi): ax2.axvline(v, color=INK2, lw=1, ls='--')
-    ax2.set_xlabel('第一階段每年成本(億元)', fontsize=9.5, color=MUTED)
-    ax2.set_title(f'95% 信賴區間 {lo:.0f}–{hi:.0f} 億(中間 95% 的重抽結果)', fontsize=9.5, color=INK2, loc='left')
+    ax2.set_xlabel('第一階段每年成本（億元）', fontsize=9.5, color=MUTED)
+    ax2.set_title(f'95% 信賴區間 {lo:.0f}–{hi:.0f} 億（中間 95% 的重抽結果）', fontsize=9.5, color=INK2, loc='left')
     return save(f, 'fig_bootstrap.png')
 
 
@@ -71,8 +71,8 @@ def fig_child_trend(J):
     ok = [T[y]['達最低生活費(%)'] for y in ys]; med = [T[y]['每位長輩合計中位數'] for y in ys]
     line = [T[y]['最低生活費(臺灣)'] for y in ys]; n = [T[y]['長輩數'] for y in ys]
     f = fig(9.4, 3.9)
-    title(f, '子女給的錢,每年約八成長輩不到最低生活費',
-          '65 歲以上長輩每月從所有子女拿到的錢,是否達到居住縣市當年的最低生活費(%);2014 年(斜線)只問所有子女合計,問法不同' + chr(10) + '* 臺灣(直轄市以外縣市)標準;直轄市各自訂定,比較時依長輩居住縣市')
+    title(f, '每年約八成長輩，子女給的錢不夠用',
+          '是否達到居住縣市最低生活費（%）；2014 年（斜線）問法不同，僅供參考' + chr(10) + '＊臺灣（直轄市以外）標準；直轄市依各自標準')
     ax = f.add_axes([0.05, 0.27, 0.93, 0.46]); ax.axis('off'); ax.set_xlim(-0.6, len(ys) - 0.4); ax.set_ylim(0, 100)
     for k, (y, o) in enumerate(zip(ys, ok)):
         lo = 100 - o
@@ -86,7 +86,7 @@ def fig_child_trend(J):
         ax.text(k, lo + o / 2, f'{o:.0f}%', ha='center', va='center', fontsize=10, color=INK2)
         ax.text(k, -9, str(y), ha='center', va='top', fontsize=11, color=INK, fontweight='bold')
         ax.text(k, -26, f'子女給的中位數 {med[k]:,.0f} 元', ha='center', va='top', fontsize=8.6, color=INK2)
-        ax.text(k, -40, f'最低生活費 {line[k]:,.0f} 元*', ha='center', va='top', fontsize=8.6, color=MUTED)
+        ax.text(k, -40, f'最低生活費 {line[k]:,.0f} 元＊', ha='center', va='top', fontsize=8.6, color=MUTED)
         ax.text(k, -54, f'n={n[k]}', ha='center', va='top', fontsize=8, color=MUTED)
     ax.text(-0.6, 106, '■', color=NOP, fontsize=11, va='bottom'); ax.text(-0.42, 106, '不到最低生活費', fontsize=9.5, color=INK2, va='bottom')
     ax.text(1.0, 106, '■', color='#d9dee0', fontsize=11, va='bottom'); ax.text(1.18, 106, '達到最低生活費', fontsize=9.5, color=INK2, va='bottom')
@@ -97,8 +97,8 @@ def fig_missing_piece(J):
     """圖 2:左 = 子女錢不夠的長輩中,過得去 vs 付不出的其他收入;右 = 付不出生活費的邏輯斯迴歸勝算比(95% 信賴區間)"""
     pr = J['income_profile']['profile']; fm = J['full_model']['vars']
     f = fig(9.4, 4.3)
-    title(f, '撐得住的人多了一筆按月年金;控制其他因素後,年金仍是最關鍵的經濟因素',
-          '左:子女的錢不夠的長輩,有各項收入的比例;右:付不出生活費的勝算比(邏輯斯迴歸,控制年齡、性別、年份與右列所有因素)')
+    title(f, '按月年金，是付得出生活費的最關鍵因素',
+          '左：子女給不夠的長輩，有各項收入的比例；右：付不出生活費的勝算比（控制其他因素）')
     # 左:啞鈴圖
     ax = f.add_axes([0.17, 0.1, 0.3, 0.64]); style(ax, 'x')
     names = ['按月年金', '儲蓄、利息、租金', '自己或配偶工作', '政府津貼(國保、老農等)']
@@ -111,17 +111,17 @@ def fig_missing_piece(J):
         lo_, hi_ = (a, b) if a < b else (b, a)
         ax.text(lo_ - 2.5, i, f'{lo_:.0f}%', va='center', ha='right', fontsize=8.3, color=PEN if lo_ == a else NOP)
         ax.text(hi_ + 2.5, i, f'{hi_:.0f}%', va='center', ha='left', fontsize=8.3, color=PEN if hi_ == a else NOP)
-    ax.set_yticks(range(len(names))); ax.set_yticklabels(names[::-1], fontsize=9, color=INK2); ax.set_xlim(0, 90)
+    ax.set_yticks(range(len(names))); ax.set_yticklabels([n.replace('(', '（').replace(')', '）') for n in names[::-1]], fontsize=9, color=INK2); ax.set_xlim(0, 90)
     ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, p: f'{int(v)}%'))
-    ax.scatter([], [], color=PEN, s=45, label=f"過得去(n={ok['n']})"); ax.scatter([], [], color=NOP, s=45, label=f"付不出(n={bad['n']})")
+    ax.scatter([], [], color=PEN, s=45, label=f"過得去（n={ok['n']}）"); ax.scatter([], [], color=NOP, s=45, label=f"付不出（n={bad['n']}）")
     ax.legend(frameon=False, fontsize=8.5, loc='lower left', bbox_to_anchor=(-0.05, 1.0), ncol=2, labelcolor=INK2)
     # 右:勝算比森林圖,依五類分組
     groups = [('主要因素', [('nop', '沒有按月年金')]),
-              ('其他收入', [('src_saving', '有存款、利息、租金收入'), ('src_work', '自己或配偶有工作收入'), ('kid_k', '子女每月給的錢(每 1,000 元)'),
-                         ('any_full', '有全職工作的子女'), ('n_kid', '子女數(每多 1 位)')]),
+              ('其他收入', [('src_saving', '有存款、利息、租金收入'), ('src_work', '自己或配偶有工作收入'), ('kid_k', '子女每月給的錢（每 1,000 元）'),
+                         ('any_full', '有全職工作的子女'), ('n_kid', '子女數（每多 1 位）')]),
               ('支出需求', [('health_bad', '自評健康差'), ('adl_basic', '行動受限')]),
               ('家庭規模', [('co_spouse', '與配偶同住'), ('alone', '獨居')]),
-              ('社經背景與生活成本', [('primary', '教育:國小以下'), ('college', '教育:大學以上'), ('six', '住六都')])]
+              ('社經背景與生活成本', [('primary', '教育：國小以下'), ('college', '教育：大學以上'), ('six', '住六都')])]
     rows = []
     for g, items in groups:
         rows.append(('header', g))
@@ -145,7 +145,7 @@ def fig_missing_piece(J):
         if v == 'nop': t.set_color(NOP); t.set_fontweight('bold')
     ax2.set_ylim(-0.6, len(rows) - 0.4)
     ax2.set_xlim(0.15, 7); ax2.set_xticks([0.25, 0.5, 1, 2, 4]); ax2.set_xticklabels(['0.25', '0.5', '1', '2', '4'], fontsize=8.5); ax2.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-    ax2.set_xlabel('勝算比(> 1 較容易付不出;灰色為不顯著)', fontsize=8.3, color=MUTED)
+    ax2.set_xlabel('勝算比（大於 1 較易付不出；灰色為不顯著）', fontsize=8.3, color=MUTED)
     return save(f, 'fig_missing_piece.png')
 
 
@@ -153,14 +153,14 @@ def fig_hidden_funnel(J):
     """圖 3:被隱藏的中低收入戶,由寬到嚴一層一層篩;每層標出人數與兩階段每年(每月)成本"""
     h = J['hidden']; c = h['cost']; n0 = h['desc']['沒年金長輩(萬)']
     levels = [(n0, '沒有按月年金的長輩', '經濟來源沒有自己或配偶的退休金', None),
-              (c['主要結果']['隱藏中低收入(萬)'][0], '① 寬鬆:被隱藏的中低收入戶', '收入(本人與配偶+子女實際給的錢)' + chr(10) + '符合津貼標準,但沒有領補助', '主要結果'),
-              (c['排除有存款利息收入者']['隱藏中低收入(萬)'][0], '② 保守:再排除有存款利息收入者', '經濟來源勾選「儲蓄、利息、租金或投資」者' + chr(10) + '(他們付不出生活費的比例明顯較低)', '排除有存款利息收入者')]
+              (c['主要結果']['隱藏中低收入(萬)'][0], '① 寬鬆：被隱藏的中低收入戶', '收入（本人與配偶＋子女實際給的錢）' + chr(10) + '符合津貼標準，但沒有領補助', '主要結果'),
+              (c['排除有存款利息收入者']['隱藏中低收入(萬)'][0], '② 保守：再排除有存款利息收入者', '經濟來源勾選「儲蓄、利息、租金或投資」者' + chr(10) + '（他們付不出生活費的比例明顯較低）', '排除有存款利息收入者')]
     f = fig(9.4, 3.6)
-    title(f, '被隱藏的中低收入戶:146 萬至 185 萬人', '第 ② 層是第 ① 層的一部分;右側為兩階段成本,每年(括號為每月)')
+    title(f, '被隱藏的中低收入戶：146–185 萬人', '第 ② 層是第 ① 層的一部分；右側為兩階段成本，每年（括號為每月）')
     ax = f.add_axes([0.02, 0.03, 0.96, 0.8]); ax.axis('off'); ax.set_xlim(0, 100); ax.set_ylim(0, len(levels))
     cols = ['#d9dee0', NOP, '#f08a55']
-    ax.text(62, len(levels) - 0.02, '第一階段:改領津貼(差額)', fontsize=9, color=MUTED, va='top')
-    ax.text(82, len(levels) - 0.02, '第二階段:補足到最低生活費', fontsize=9, color=MUTED, va='top')
+    ax.text(62, len(levels) - 0.02, '第一階段：改領津貼（差額）', fontsize=9, color=MUTED, va='top')
+    ax.text(82, len(levels) - 0.02, '第二階段：補足到最低生活費', fontsize=9, color=MUTED, va='top')
     for i, (n, lab, sub, key) in enumerate(levels):
         y = len(levels) - i - 0.62
         ax.text(0, y + 0.12, lab, fontsize=9.6, color=INK, va='center', fontweight='bold')
@@ -171,9 +171,9 @@ def fig_hidden_funnel(J):
         if key:
             s1, s2 = c[key]['第一階段(億)'][0], c[key]['第二階段(億)'][0]
             ax.text(62, y + 0.1, f'{s1:,.0f} 億元/年', fontsize=11, fontweight='bold', color=INK, va='center')
-            ax.text(62, y - 0.2, f'(約 {s1/12:,.0f} 億元/月)', fontsize=8.5, color=INK2, va='center')
+            ax.text(62, y - 0.2, f'（約 {s1/12:,.0f} 億元/月）', fontsize=8.5, color=INK2, va='center')
             ax.text(82, y + 0.1, f'再加 {s2:,.0f} 億元/年', fontsize=11, fontweight='bold', color=INK2, va='center')
-            ax.text(82, y - 0.2, f'(約 {s2/12:,.0f} 億元/月)', fontsize=8.5, color=INK2, va='center')
+            ax.text(82, y - 0.2, f'（約 {s2/12:,.0f} 億元/月）', fontsize=8.5, color=INK2, va='center')
     return save(f, 'fig_hidden_funnel.png')
 
 
@@ -182,12 +182,12 @@ def fig_formula():
     plt.rcParams['mathtext.fontset'] = 'cm'
     f = plt.figure(figsize=(9.4, 3.0), dpi=220, facecolor='white')
     ax = f.add_axes([0, 0, 1, 1]); ax.axis('off'); ax.set_xlim(0, 100); ax.set_ylim(0, 100)
-    rows = [('(1) 每人每月可用的錢', r'$y_i=\dfrac{W_i+B_i+C_i}{n_i}$'),
-            ('(2) 應領津貼', None),
-            ('(3) 擇一後實際增加的錢', r'$g_i=\max\left(A_i-E_i,\ 0\right)$'),
-            ('(4) 被隱藏的中低收入戶', r'$H_i=1$,若 $A_i>0$ 且 $S_i=0$'),
-            ('(5) 第一階段成本(每年)', r'$C_1=12\,N\cdot\mathrm{E}_w\left[H_i\,g_i\right]$'),
-            ('(6) 第二階段成本(每年)', r'$C_2=12\,N\cdot\mathrm{E}_w\left[\max\left(L_i-y_i-g_i,\ 0\right)\right]$')]
+    rows = [('（1）每人每月可用的錢', r'$y_i=\dfrac{W_i+B_i+C_i}{n_i}$'),
+            ('（2）應領津貼', None),
+            ('（3）擇一後實際增加的錢', r'$g_i=\max\left(A_i-E_i,\ 0\right)$'),
+            ('（4）被隱藏的中低收入戶', r'$H_i=1$，若 $A_i>0$ 且 $S_i=0$'),
+            ('（5）第一階段成本（每年）', r'$C_1=12\,N\cdot\mathrm{E}_w\left[H_i\,g_i\right]$'),
+            ('（6）第二階段成本（每年）', r'$C_2=12\,N\cdot\mathrm{E}_w\left[\max\left(L_i-y_i-g_i,\ 0\right)\right]$')]
     ys = [91, 68, 46, 33, 20, 7]
     for (lab, fx), y in zip(rows, ys):
         ax.text(1, y, lab, fontsize=11, color='#1b1f24', va='center')
@@ -196,7 +196,7 @@ def fig_formula():
     # (2) 分段函數:手動畫大括號
     ax.text(30, 68, r'$A_i=$', fontsize=14.5, va='center')
     ax.text(36.2, 68, '{', fontsize=40, va='center', color='#1b1f24', fontweight='light')
-    for dy, txt in [(8, r'$8{,}329$ 元,  若 $y_i<1.5\,L_i$'), (0, r'$4{,}164$ 元,  若 $1.5\,L_i\leq y_i<2.5\,L_i$'), (-8, r'$0$,  其他')]:
+    for dy, txt in [(8, r'$8{,}329$ 元，若 $y_i<1.5\,L_i$'), (0, r'$4{,}164$ 元，若 $1.5\,L_i\leq y_i<2.5\,L_i$'), (-8, r'$0$，其他')]:
         ax.text(39.5, 68 + dy, txt, fontsize=13, va='center', color='#1b1f24')
     f.savefig(FIG_DIR / 'fig_formula.png', facecolor='white', bbox_inches='tight', pad_inches=0.08); plt.close(f)
     return FIG_DIR / 'fig_formula.png'
