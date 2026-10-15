@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>子女養不起</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* 版面:一本家計簿。紅筆只用在「答案」與最關鍵的數字 */
+:root {
+  --bg: #efebe3;          /* 牛皮紙 */
+  --sheet: #fcfbf7;       /* 帳簿內頁 */
+  --ink: #23201b;
+  --muted: #6b645a;
+  --rule: #d9d2c4;
+  --line: #e9e3d6;        /* 帳簿橫線 */
+  --pen: #b8321f;         /* 紅筆 */
+  --pen-soft: #f5e0d9;
+  --s1: #f0b54a;          /* 子女給不夠 */
+  --s2: #d9623a;          /* 且沒有年金 */
+  --s3: #9e2a1c;          /* 且付不出 */
+  --ok: #cfc8b8;          /* 子女給的夠 / 其他 */
+  --good: #24935f;
+  --other: #7d776c;
+  --cell: #e4ded1;
+  --f-display: "LXGW WenKai TC", "Kaiti TC", "DFKai-SB", "BiauKai", serif;
+  --f-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --f-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --step-0: 1rem; --step-1: 1.2rem; --step-2: 1.55rem; --step-3: 2.1rem; --step-4: clamp(2.2rem, 6vw, 3.5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15130f; --sheet: #1e1b16; --ink: #ece6da; --muted: #a59d90; --rule: #3a352c; --line: #2a261f;
+    --pen: #ee7158; --pen-soft: #43251e; --s1: #e8b04f; --s2: #e2734c; --s3: #c2453a; --ok: #4a4539;
+    --good: #4cbc86; --other: #8f897d; --cell: #2c2821;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15130f; --sheet: #1e1b16; --ink: #ece6da; --muted: #a59d90; --rule: #3a352c; --line: #2a261f;
+  --pen: #ee7158; --pen-soft: #43251e; --s1: #e8b04f; --s2: #e2734c; --s3: #c2453a; --ok: #4a4539;
+  --good: #4cbc86; --other: #8f897d; --cell: #2c2821;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: var(--step-0); line-height: 1.75; }
+.wrap { max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 64px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; line-height: 1.3; text-wrap: balance; margin: 0; }
+h1 { font-size: var(--step-4); letter-spacing: .02em; }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-1); }
+p { margin: 0; max-width: 64ch; }
+a { color: inherit; text-decoration-color: var(--pen); text-underline-offset: 3px; }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: .8rem; letter-spacing: .12em; color: var(--muted); font-weight: 500; }
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: clamp(20px, 4vw, 40px); display: grid; gap: 18px; min-width: 0; }
+.qtag { font-family: var(--f-display); color: var(--pen); font-size: var(--step-1); }
+.lead { font-size: 1.08rem; }
+.muted { color: var(--muted); font-size: .9rem; }
+.pen { color: var(--pen); }
+.mark { background: linear-gradient(transparent 62%, var(--pen-soft) 62%); padding-inline: .1em; }
+button { font: inherit; cursor: pointer; }
+.btn { border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); padding: 8px 16px; border-radius: 999px; font-size: .92rem; transition: border-color .2s, background .2s; }
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+.btn:focus-visible, .seg button:focus-visible, .card:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; gap: 3px; background: var(--bg); flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 6px 14px; border-radius: 999px; font-size: .92rem; }
+.seg button[aria-pressed="true"] { background: var(--sheet); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .88rem; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---- 開場:100 位長輩 ---- */
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 760px) { .hero-grid { grid-template-columns: 1fr; } }
+.hero-text { display: grid; gap: 16px; min-width: 0; }
+.waffle-box { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.waffle { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-width: 380px; width: 100%; margin-inline: auto; }
+.cell { aspect-ratio: 1; border-radius: 50% 50% 4px 4px; background: var(--cell); transition: background .5s ease, transform .4s ease; }
+.cell[data-s="ok"] { background: var(--ok); }
+.cell[data-s="s1"] { background: var(--s1); }
+.cell[data-s="s2"] { background: var(--s2); }
+.cell[data-s="s3"] { background: var(--s3); }
+.cell[data-s="hid"] { background: var(--pen); }
+.cell[data-s="got"] { background: var(--good); }
+.cell[data-s="oth"] { background: var(--other); }
+.cell[data-s="gs"] { background: var(--good); }
+.cell.guess { box-shadow: inset 0 0 0 2px var(--ink); }
+.step-text { min-height: 2em; display: grid; gap: 8px; align-content: start; }
+.step-text .big { font-family: var(--f-num); font-size: 2.6rem; line-height: 1; color: var(--pen); font-weight: 600; }
+.guess-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+input[type="range"] { width: 100%; accent-color: var(--pen); }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
+.dots i.on { background: var(--ink); }
+
+/* ---- 阿嬤的帳單 ---- */
+.persona { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; border: 1px dashed var(--rule); border-radius: 6px; padding: 14px 16px; }
+.persona .face { width: 56px; height: 56px; border-radius: 50%; background: var(--pen-soft); display: grid; place-items: center; font-family: var(--f-display); font-size: 1.5rem; color: var(--pen); }
+.calc { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 28px; align-items: start; }
+@media (max-width: 820px) { .calc { grid-template-columns: 1fr; } }
+.ctrls { display: grid; gap: 14px; min-width: 0; }
+.ctrl { display: grid; gap: 4px; }
+.ctrl label, .ctrl .lab { font-size: .92rem; display: flex; justify-content: space-between; gap: 8px; }
+.ctrl output { font-family: var(--f-num); }
+select { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); }
+.kid { display: grid; grid-template-columns: 3.2em minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: .9rem; }
+.ctrl label.idle { display: inline-flex; justify-content: flex-start; gap: 6px; font-size: .82rem; color: var(--muted); }
+.kid .v { font-family: var(--f-num); min-width: 6.5em; text-align: right; }
+.kid label { display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; font-size: .82rem; color: var(--muted); }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.presets .btn { font-size: .85rem; padding: 6px 12px; }
+.presets .btn[aria-pressed="true"] { border-color: var(--pen); background: var(--pen-soft); }
+.receipts { display: grid; gap: 16px; min-width: 0; }
+.receipt { border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; display: grid; gap: 6px; background:
+  repeating-linear-gradient(var(--sheet) 0 27px, var(--line) 27px 28px); }
+.receipt h3 { font-size: 1.05rem; display: flex; justify-content: space-between; gap: 8px; }
+.receipt .ln { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; font-size: .92rem; }
+.receipt .ln .num { text-align: right; }
+.receipt .ln.tot { border-top: 1.5px solid var(--ink); padding-top: 4px; font-weight: 700; }
+.tag { font-size: .72rem; border: 1px solid var(--pen); color: var(--pen); border-radius: 3px; padding: 0 4px; margin-left: 4px; vertical-align: 1px; }
+.verdict { font-family: var(--f-display); font-size: 1.3rem; padding: 6px 0 0; }
+.verdict.no { color: var(--pen); }
+.verdict.yes { color: var(--good); }
+.shock { border-left: 3px solid var(--pen); padding: 6px 0 6px 16px; font-size: 1.08rem; }
+.stamp { display: inline-block; border: 2px solid currentColor; border-radius: 4px; padding: 0 8px; transform: rotate(-4deg); font-family: var(--f-display); }
+
+/* ---- 成本 ---- */
+.cost { display: grid; gap: 14px; }
+.bar { position: relative; height: 54px; display: flex; border-radius: 4px; overflow: hidden; background: var(--cell); }
+.bar div { height: 100%; display: flex; align-items: center; padding-inline: 12px; color: #fff; font-size: .9rem; white-space: nowrap; transition: width .6s ease; min-width: 0; overflow: hidden; }
+.bar .b1 { background: var(--s2); margin-right: 2px; }
+.bar .b2 { background: var(--s3); }
+.axis { position: relative; height: 22px; font-family: var(--f-num); font-size: .78rem; color: var(--muted); }
+.axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: .85rem; }
+td.num { text-align: right; white-space: nowrap; }
+.tbl { overflow-x: auto; }
+
+/* ---- 翻牌 ---- */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+.card { perspective: 1200px; border: 0; padding: 0; background: none; text-align: left; color: var(--ink); min-height: 380px; }
+.card .in { position: relative; width: 100%; height: 100%; min-height: 380px; transition: transform .7s cubic-bezier(.3,.7,.3,1); transform-style: preserve-3d; }
+.card[aria-pressed="true"] .in { transform: rotateY(180deg); }
+.face2 { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 8px; border: 1px solid var(--rule); padding: 20px; display: grid; gap: 10px; align-content: start; overflow: auto; }
+.front { background: var(--sheet); }
+.back { background: var(--ink); color: var(--sheet); transform: rotateY(180deg); }
+.back a { color: var(--sheet); }
+.card .no { font-family: var(--f-num); font-size: .8rem; color: var(--pen); letter-spacing: .1em; }
+.back .no { color: var(--s1); }
+.card h3 { font-size: 1.15rem; }
+.card p { font-size: .9rem; line-height: 1.65; }
+.card .hint { font-size: .8rem; color: var(--muted); margin-top: auto; }
+.card .src { font-size: .75rem; opacity: .8; }
+.flag { display: inline-block; font-size: .78rem; border: 1px solid currentColor; border-radius: 999px; padding: 0 8px; margin-right: 4px; }
+.discuss { border: 2px dashed var(--pen); border-radius: 8px; padding: clamp(18px, 3vw, 28px); display: grid; gap: 12px; background: var(--sheet); }
+.discuss .ask { font-family: var(--f-display); font-size: 1.35rem; }
+.vote { display: flex; flex-wrap: wrap; gap: 8px; }
+.vote .btn[aria-pressed="true"] { border-color: var(--pen); background: var(--pen-soft); }
+.reveal { display: none; gap: 10px; }
+.reveal.on { display: grid; }
+.sources { font-size: .82rem; color: var(--muted); display: grid; gap: 4px; }
+.sources a { word-break: break-all; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<!-- ================= 開場 ================= -->
+<section class="hero-grid" aria-labelledby="t">
+  <div class="hero-text">
+    <span class="eyebrow">PSFD 華人家庭動態資料庫 2014–2024 · 互動版</span>
+    <h1 id="t">子女養不起,<br>國家養得起嗎?</h1>
+    <p class="lead">臺灣的社會救助有一個前提:<span class="mark">有子女,就有人養</span>。所以長輩申請補助時,子女的收入也要算進來。但子女真的給得夠嗎?</p>
+    <p>先把 65 歲以上的長輩縮成 <b>100 位</b>,一步一步看。</p>
+    <div class="step-text" id="stepText" aria-live="polite"></div>
+    <div id="guessBox" class="ctrl">
+      <div class="lab"><span>你猜:100 位長輩裡,子女每月給的錢<b>夠</b>當地最低生活費的有幾位?</span></div>
+      <div class="guess-row">
+        <input type="range" id="guess" min="0" max="100" value="50" aria-label="猜測人數">
+        <output id="guessOut" class="num" style="font-size:1.3rem">50 位</output>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn" id="prev" type="button">上一步</button>
+      <button class="btn primary" id="next" type="button">揭曉</button>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="waffle-box">
+    <div class="waffle" id="waffle" role="img" aria-label="100 位長輩的點陣圖"></div>
+    <div class="legend" id="legend"></div>
+    <p class="muted" id="wnote">每一格代表 1% 的 65 歲以上長輩(依年齡、性別加權)。</p>
+  </div>
+</section>
+
+<!-- ================= 阿嬤的帳單 ================= -->
+<section class="sheet" aria-labelledby="q2">
+  <span class="qtag">一、阿嬤的帳單</span>
+  <h2 id="q2">孩子每月只給阿嬤 3,000 元,為什麼政府說她「不窮」?</h2>
+  <div class="persona">
+    <div class="face" aria-hidden="true">嬤</div>
+    <p>認識一下<b>阿嬤</b>(虛構人物):75 歲,一個人住在臺灣的非直轄市縣市。她沒有按月領的年金,每月有國民年金的基本保證年金,偶爾做點資源回收。三個孩子都有工作,但各自要養家,<b>三個人加起來每月給她 3,000 元</b>。</p>
+  </div>
+  <p>她可以領每月 8,329 元的中低收入老人生活津貼嗎?動動左邊的條件,看看兩種算法有什麼不同。</p>
+
+  <div class="calc">
+    <div class="ctrls">
+      <div class="ctrl">
+        <span class="lab">換一個家庭試試</span>
+        <div class="presets" id="presets">
+          <button class="btn" type="button" data-p="0" aria-pressed="true">三個上班的孩子</button>
+          <button class="btn" type="button" data-p="1">一個高薪的獨子</button>
+          <button class="btn" type="button" data-p="2">三個孩子都沒工作</button>
+          <button class="btn" type="button" data-p="3">孩子收入都不高</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <label for="ben"><span>阿嬤現在領的津貼</span></label>
+        <select id="ben">
+          <option value="4049">國民年金基本保證年金 4,049 元</option>
+          <option value="8110">老農津貼 8,110 元</option>
+          <option value="0">什麼都沒領</option>
+        </select>
+      </div>
+      <div class="ctrl">
+        <label for="work"><span>阿嬤自己的收入(資源回收、零工)</span><output id="workOut">1,000 元</output></label>
+        <input type="range" id="work" min="0" max="10000" step="500" value="1000">
+      </div>
+      <div class="ctrl">
+        <label for="give"><span>孩子們<b>實際</b>每月給阿嬤(合計)</span><output id="giveOut">3,000 元</output></label>
+        <input type="range" id="give" min="0" max="20000" step="500" value="3000">
+      </div>
+      <div class="ctrl">
+        <span class="lab"><span>孩子的月收入</span><span class="muted" style="font-size:.8rem">勾「沒工作」= 依法以基本工資推算</span></span>
+        <div class="row" style="gap:6px">
+          <span class="muted" style="font-size:.85rem">孩子人數</span>
+          <div class="seg" id="kidN">
+            <button type="button" data-n="1">1</button><button type="button" data-n="2">2</button><button type="button" data-n="3" aria-pressed="true">3</button><button type="button" data-n="4">4</button>
+          </div>
+        </div>
+        <div id="kids" style="display:grid;gap:8px;margin-top:6px"></div>
+      </div>
+    </div>
+
+    <div class="receipts">
+      <div class="receipt" aria-live="polite">
+        <h3><span>現行規定:政府怎麼算</span><span class="muted" style="font-weight:400;font-size:.8rem">子女收入列入</span></h3>
+        <div id="rCur"></div>
+      </div>
+      <div class="receipt" aria-live="polite">
+        <h3><span>只算孩子實際給的錢</span><span class="muted" style="font-weight:400;font-size:.8rem">本研究的算法</span></h3>
+        <div id="rNew"></div>
+      </div>
+    </div>
+  </div>
+  <p class="shock" id="shock"></p>
+  <details class="muted">
+    <summary>這個試算怎麼算的?(簡化示意)</summary>
+    <p style="margin-top:8px">現行規定:依<a href="https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=D0050045&flno=3" target="_blank" rel="noopener">中低收入老人生活津貼發給辦法第 3 條</a>,家庭人口與收入準用<a href="https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=D0050078&flno=5" target="_blank" rel="noopener">社會救助法第 5 條</a>:一親等直系血親(子女)不論是否同住都要列入。有工作能力卻沒工作的人,依<a href="https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=D0050078&flno=5-1" target="_blank" rel="noopener">第 5-1 條</a>以基本工資(2024 年 27,470 元)推算收入。全家收入除以人數,低於最低生活費 1.5 倍(21,345 元)領 8,329 元,1.5–2.5 倍(35,575 元)領 4,164 元。最低生活費採 2024 年臺灣(直轄市以外)的 14,230 元。津貼與國民年金基本保證年金、老農津貼只能擇一(<a href="https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=D0050045&flno=12" target="_blank" rel="noopener">第 12 條</a>)。</p>
+    <p style="margin-top:8px">省略的部分:存款、房地產上限;「不超過平均每人消費支出 1.5 倍」的另一道門檻;第 5-1 條的例外(例如已向就業服務機構登記求職、55 歲以上經三次推介未就業)。另外,子女若未盡扶養義務,經縣市政府訪視評估可以不列入(<a href="https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=D0050078&flno=5" target="_blank" rel="noopener">第 5 條第 3 項第 9 款</a>),但要長輩主動提出。</p>
+  </details>
+</section>
+
+<!-- ================= 成本 ================= -->
+<section class="sheet" aria-labelledby="q3">
+  <span class="qtag">二、國家養得起嗎?</span>
+  <h2 id="q3">把像阿嬤這樣的長輩補起來,一年要多少錢?</h2>
+  <p>分兩步補:<b>先讓她們領到本來就該有的津貼</b>,再把仍不夠的人<b>補到最低生活費</b>。</p>
+  <div class="row">
+    <div class="seg" id="scen" role="group" aria-label="估計方式">
+      <button type="button" data-s="wide" aria-pressed="true">寬鬆估計</button>
+      <button type="button" data-s="cons">保守估計(排除有存款利息收入者)</button>
+    </div>
+  </div>
+  <div class="cost">
+    <div class="bar" id="bar"><div class="b1" id="b1"></div><div class="b2" id="b2"></div></div>
+    <div class="axis" id="axis"></div>
+    <p id="costText"></p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>順序</th><th>做什麼</th><th>誰受益</th><th style="text-align:right">每年多花</th></tr></thead>
+      <tbody id="ptab"></tbody>
+    </table>
+  </div>
+  <p class="muted">信賴區間以分層集群拔靴法(2,000 次)計算;人數以 65 歲以上 457 萬人推估。資料:PSFD 2022、2024 年 65 歲以上長輩(1,500 人次、862 人),試算對象為其中沒有按月年金者(704 人次)。追蹤樣本每波約 9–12% 沒有再受訪,65 歲以上者流失較多(沒有按月年金者 18%、有年金者 10%),困難者可能較難被訪到。</p>
+</section>
+
+<!-- ================= 翻牌 ================= -->
+<section class="sheet" aria-labelledby="q4">
+  <span class="qtag">三、卡在哪裡?</span>
+  <h2 id="q4">四道關卡,別的國家怎麼過?</h2>
+  <p>每張卡正面是臺灣遇到的問題,<b>先想想你會怎麼解,再點卡片翻開</b>,看看別的國家的做法。</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<!-- ================= 討論 ================= -->
+<section class="discuss" aria-labelledby="q5">
+  <span class="qtag">最後一張:討論卡</span>
+  <h2 id="q5" class="ask">如果國家多給,孩子會不會就少給?</h2>
+  <p>這是我們還沒辦法回答的問題。你覺得呢?</p>
+  <div class="vote" id="vote">
+    <button class="btn" type="button" data-v="a">孩子會少給,國家等於白給</button>
+    <button class="btn" type="button" data-v="b">少給一些,但長輩還是變寬裕</button>
+    <button class="btn" type="button" data-v="c">不會變,錢和感情是兩回事</button>
+  </div>
+  <div class="reveal" id="voteReveal">
+    <p><span class="flag">韓國</span>韓國推出新的老年年金後,Koh 與 Yang(2021)用全國代表性的家戶調查比較發現:<b>子女給父母的現金幾乎被等額抵銷</b>,國家多給多少,子女就少給多少。</p>
+    <p>這代表國家的錢可能沒有讓長輩變寬裕,而是減輕了子女的負擔。這算失敗嗎?對同樣手頭緊的子女來說,也許不是。</p>
+    <p>臺灣的情況會不會一樣?需要後續研究,用追蹤資料看「長輩開始領津貼之後,子女給的錢怎麼變」。</p>
+    <p class="muted">Koh, K., &amp; Yang, H. (2021). Social insurance in an aging population: Impacts of a government transfer program in South Korea. <i>Economic Development and Cultural Change</i>, 69(4), 1301–1322. <a href="https://ideas.repec.org/a/ucp/ecdecc/doi10.1086-705021.html" target="_blank" rel="noopener">連結</a></p>
+  </div>
+</section>
+
+<!-- ================= 研究限制 ================= -->
+<section class="sheet" aria-labelledby="qlim">
+  <span class="qtag">研究限制</span>
+  <h2 id="qlim">這些數字有哪些限制</h2>
+  <ul style="margin:0;padding-left:1.3em;display:grid;gap:10px;max-width:68ch">
+    <li><b>人數與金額是上限</b>:問卷沒有存款與房產資料,也沒算同住子女的居住、飲食支持(符合資格者 61% 與子女同住,74% 自評生活費夠用)。保守版只排除了有存款利息收入者,房產仍無法排除。</li>
+    <li><b>「領到」的定義</b>:問卷只問「中低收入戶生活補助」,沒問「中低收入老人生活津貼」;後者與國民年金、老農津貼只能擇一,領津貼者可能被算成沒領(此組 37% 勾選政府津貼為經濟來源,n=187)。</li>
+    <li><b>成因為推論</b>:問卷沒有子女收入,「因子女收入而沒領」是依法規推論,也可能是沒有申請。</li>
+    <li><b>試算假設</b>:同住配偶若符合資格也一併領取;已領補助者以應領津貼計;沒填金額者一律代入 2024 年法定金額(國民年金 4,049 元、老農津貼 8,110 元)。</li>
+    <li><b>樣本流失</b>:受訪者下一波沒再受訪的比例 7.5%(2016→2018)、11.6%、9.4%、8.8%(2022→2024);65 歲以上者合計 14.1%(333/2,362 人次),沒有按月年金者 18.0%、有年金者 9.5%。困難者較難被訪到,可能低估困難比例。</li>
+  </ul>
+</section>
+
+<section class="sources" aria-label="資料來源">
+  <b>資料與來源</b>
+  <span>本頁數字來自報告《子女養不起,國家養得起嗎?被隱藏的中低收入戶》,使用中央研究院華人家庭動態資料庫(PSFD)。頁面只呈現彙總數字,不含任何個人資料。</span>
+  <span>監察院(2019)。社會救助法第 5 條第 3 項第 9 款調查報告。<a href="https://cybsbox.cy.gov.tw/CYBSBoxSSL/edoc/download/70354" target="_blank" rel="noopener">cybsbox.cy.gov.tw/…/70354</a></span>
+</section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const fmt = n => Math.round(n).toLocaleString('en-US');
+
+/* ================= 開場:100 位長輩 ================= */
+// 每一步:各狀態的格數(依序填入)、說明文字、圖例
+const STEPS = [
+  { cells: [], text: () => `<p>拉動下方的滑桿,先猜一個數字,再按「揭曉」。</p>`, legend: [['gs', '你猜子女給的錢夠的人']] },
+  { cells: [['ok', 22], ['s1', 78]],
+    text: g => `<span class="big">22 位</span><p>只有 22 位長輩,子女每月給的錢達到居住縣市的最低生活費(你猜了 ${g} 位)。<b>另外 78 位,子女給的錢不夠一個人生活。</b></p><p class="muted">2022、2024 年,n=1,405 人次;2014–2024 年每年都在 77–82% 之間。</p>`,
+    legend: [['ok', '子女給的錢夠'], ['s1', '子女給的錢不夠']] },
+  { cells: [['hid', 40], ['ok', 60]],
+    text: () => `<span class="big">40 位</span><p>就算把國民年金、老農津貼和子女實際給的錢都算進來,<b>40 位的收入仍低到符合中低收入老人津貼,卻沒有領到中低收入戶生活補助</b>。我們稱他們為「被隱藏的中低收入戶」,依收入推算約 185 萬人。</p><p class="muted"><b>這是上限</b>:沒算資產與同住子女的支持(61% 與子女同住),其中 74% 自評生活費夠用。寬鬆估計,n=644 人次;排除有存款利息收入者後為 32 位(146 萬人)。</p>`,
+    legend: [['hid', '依收入推算符合、未領補助(上限)'], ['ok', '其他長輩']] },
+];
+const COLORS = { ok: 'var(--ok)', s1: 'var(--s1)', s2: 'var(--s2)', s3: 'var(--s3)', hid: 'var(--pen)', gs: 'var(--good)', got: 'var(--good)', oth: 'var(--other)' };
+const waffle = $('#waffle');
+for (let i = 0; i < 100; i++) { const c = document.createElement('div'); c.className = 'cell'; waffle.appendChild(c); }
+const cells = [...waffle.children];
+let step = 0;
+$('#dots').innerHTML = STEPS.map(() => '<i></i>').join('');
+function showGuess() {
+  const g = +$('#guess').value; $('#guessOut').textContent = g + ' 位';
+  if (step === 0) cells.forEach((c, i) => { c.dataset.s = i < g ? 'gs' : ''; c.classList.remove('guess'); });
+}
+function render() {
+  const S = STEPS[step], g = +$('#guess').value;
+  if (step > 0) {
+    let k = 0; cells.forEach(c => c.classList.remove('guess'));
+    S.cells.forEach(([s, n]) => { for (let j = 0; j < n; j++) cells[k++].dataset.s = s; });
+    if (step === 1) { const d = Math.min(Math.max(g, 0), 100); if (d > 0) cells[(d - 1)].classList.add('guess'); }
+  } else showGuess();
+  $('#stepText').innerHTML = S.text(g);
+  $('#legend').innerHTML = S.legend.map(([s, t]) => `<span><i class="sw" style="background:${COLORS[s]}"></i>${t}</span>`).join('');
+  $('#guessBox').style.display = step === 0 ? '' : 'none';
+  $('#prev').disabled = step === 0;
+  $('#next').textContent = step === 0 ? '揭曉' : step === STEPS.length - 1 ? '看阿嬤的故事 ↓' : '下一步';
+  [...$('#dots').children].forEach((d, i) => d.classList.toggle('on', i === step));
+}
+$('#guess').addEventListener('input', () => { showGuess(); });
+$('#next').addEventListener('click', () => {
+  if (step === STEPS.length - 1) { $('#q2').scrollIntoView({ behavior: 'smooth' }); return; }
+  step++; render();
+});
+$('#prev').addEventListener('click', () => { if (step > 0) { step--; render(); } });
+render();
+
+/* ================= 阿嬤的帳單 ================= */
+const L = 14230, T1 = 1.5 * L, T2 = 2.5 * L, MINW = 27470, FULL = 8329, HALF = 4164;
+const PRESETS = [
+  { n: 3, kids: [[47000, false], [47000, false], [47000, false]] },
+  { n: 1, kids: [[70000, false]] },
+  { n: 3, kids: [[0, true], [0, true], [0, true]] },
+  { n: 3, kids: [[26000, false], [24000, false], [25000, false]] },
+];
+let kids = PRESETS[0].kids.map(k => [...k]);
+let nKids = 3;
+const allow = pc => pc < T1 ? FULL : pc < T2 ? HALF : 0;
+const kidVal = ([v, idle]) => idle ? MINW : v;
+
+function drawKids() {
+  while (kids.length < nKids) kids.push([40000, false]);
+  $('#kids').innerHTML = kids.slice(0, nKids).map(([v, idle], i) => `
+    <div class="kid">
+      <span>孩子${'一二三四'[i]}</span>
+      <input type="range" min="0" max="100000" step="1000" value="${v}" data-i="${i}" aria-label="孩子${'一二三四'[i]}的月收入" ${idle ? 'disabled' : ''}>
+      <span class="v">${idle ? fmt(MINW) + '<span class="tag">推算</span>' : fmt(v)}</span>
+    </div>
+    <div style="margin:-6px 0 0 3.2em"><label class="idle"><input type="checkbox" data-c="${i}" ${idle ? 'checked' : ''}> 沒工作(有工作能力)</label></div>`).join('');
+  $('#kids').querySelectorAll('input[type=range]').forEach(r => r.addEventListener('input', e => { kids[+e.target.dataset.i][0] = +e.target.value; markPreset(-1); drawKids(); calc(); focusBack(e.target.dataset.i); }));
+  $('#kids').querySelectorAll('input[type=checkbox]').forEach(r => r.addEventListener('change', e => { kids[+e.target.dataset.c][1] = e.target.checked; markPreset(-1); drawKids(); calc(); }));
+  $('#kidN').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.n === nKids));
+}
+function focusBack(i) { const r = $(`#kids input[data-i="${i}"]`); if (r) r.focus(); }
+function markPreset(p) { $('#presets').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.p === p)); }
+
+function calc() {
+  const B = +$('#ben').value, W = +$('#work').value, C = +$('#give').value;
+  const benName = { 4049: '國民年金基本保證年金', 8110: '老農津貼', 0: '津貼' }[B];
+  $('#workOut').textContent = fmt(W) + ' 元'; $('#giveOut').textContent = fmt(C) + ' 元';
+  // 現行規定:阿嬤 + 每個孩子列入,收入加總除以人數
+  const ks = kids.slice(0, nKids), kidSum = ks.reduce((s, k) => s + kidVal(k), 0);
+  const persons = 1 + nKids, pc = (W + B + kidSum) / persons, A0 = allow(pc), g0 = Math.max(A0 - B, 0);
+  let h = `<div class="ln"><span>阿嬤自己的收入 + ${benName}</span><span class="num">${fmt(W + B)}</span></div>`;
+  ks.forEach((k, i) => h += `<div class="ln"><span>孩子${'一二三四'[i]}的月收入${k[1] ? '<span class="tag">沒工作,依基本工資推算</span>' : ''}</span><span class="num">${fmt(kidVal(k))}</span></div>`);
+  h += `<div class="ln"><span>÷ 全家 ${persons} 人(阿嬤 + ${nKids} 個孩子)</span><span class="num"></span></div>`;
+  h += `<div class="ln tot"><span>每人每月</span><span class="num">${fmt(pc)}</span></div>`;
+  h += A0 === 0 ? `<div class="verdict no"><span class="stamp">不符合</span> 超過 ${fmt(T2)} 元的上限</div>`
+       : `<div class="verdict yes">符合:每月 ${fmt(A0)} 元${B ? `(改領後實際多 ${fmt(g0)} 元)` : ''}</div>`;
+  $('#rCur').innerHTML = h;
+  // 本研究:只算孩子實際給的錢,阿嬤一個人
+  const y = W + B + C, A1 = allow(y), g1 = Math.max(A1 - B, 0), gap = Math.max(L - y - g1, 0);
+  let r = `<div class="ln"><span>阿嬤自己的收入 + ${benName}</span><span class="num">${fmt(W + B)}</span></div>`;
+  r += `<div class="ln"><span>孩子們實際給的錢</span><span class="num">${fmt(C)}</span></div>`;
+  r += `<div class="ln tot"><span>阿嬤每月真正可用的錢</span><span class="num">${fmt(y)}</span></div>`;
+  r += A1 === 0 ? `<div class="verdict no">不符合:收入超過 ${fmt(T2)} 元</div>`
+       : `<div class="verdict yes">符合:每月 ${fmt(A1)} 元</div>
+          <div class="ln"><span><b>第一階段</b>:改領津貼,${B ? `放棄原本的 ${fmt(B)} 元,` : ''}每月實際多</span><span class="num">+${fmt(g1)}</span></div>
+          <div class="ln"><span><b>第二階段</b>:補到最低生活費 ${fmt(L)} 元,還差</span><span class="num">${gap ? '+' + fmt(gap) : '已補足'}</span></div>`;
+  $('#rNew').innerHTML = r;
+  // 一句話
+  let s;
+  if (A0 < A1) s = `阿嬤每月真正可用的錢只有 <b class="num">${fmt(y)}</b> 元,但在現行算法裡,她「每人每月有 <b class="num pen">${fmt(pc)}</b> 元」。<b>${A0 === 0 ? '有孩子,讓她一毛津貼都領不到' : '有孩子,讓她的津貼少了一半'}</b>${ks.some(k => k[1]) ? ',即使孩子沒工作,也照基本工資算' : ''}。`;
+  else if (A1 === 0) s = `阿嬤自己的錢已經超過標準,兩種算法都不符合。`;
+  else s = `這個家庭裡,兩種算法的結果一樣。試試「三個上班的孩子」或「三個孩子都沒工作」。`;
+  $('#shock').innerHTML = s;
+}
+$('#presets').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const P = PRESETS[+b.dataset.p]; nKids = P.n; kids = P.kids.map(k => [...k]); markPreset(+b.dataset.p); drawKids(); calc();
+});
+$('#kidN').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; nKids = +b.dataset.n; markPreset(-1); drawKids(); calc(); });
+['ben', 'work', 'give'].forEach(id => $('#' + id).addEventListener('input', calc));
+drawKids(); calc();
+
+/* ================= 成本 ================= */
+const COST = {
+  wide: { n: 185, ni: '171–197', g: 3777, c1: 837, c1i: '736–946', n2: 108, c2: 555, c2i: '476–642', nn: 644, nn2: 380 },
+  cons: { n: 146, ni: '136–157', g: 3701, c1: 651, c1i: '559–739', n2: 85, c2: 428, c2i: '359–504', nn: 513, nn2: 299 },
+};
+const MAXC = 1500;
+function cost(k) {
+  const d = COST[k];
+  $('#b1').style.width = (d.c1 / MAXC * 100) + '%'; $('#b1').textContent = `第一階段 ${d.c1} 億`;
+  $('#b2').style.width = (d.c2 / MAXC * 100) + '%'; $('#b2').textContent = `第二階段 ${d.c2} 億`;
+  $('#axis').innerHTML = [0, 500, 1000].map(v => `<span style="left:${v / MAXC * 100}%${v ? '' : ';transform:none'}">${fmt(v)}</span>`).join('') + `<span style="left:100%;transform:translateX(-100%)">1,500 億元/年</span>`;
+  $('#costText').innerHTML = `<b>第一步</b>:${d.n} 萬人改領津貼,每人每月平均補 <b class="num">${fmt(d.g)}</b> 元,一年 <b class="num">${d.c1}</b> 億。<b>第二步</b>:改領後仍有 ${d.n2} 萬人低於最低生活費,補到最低生活費一年再 <b class="num">${d.c2}</b> 億。<br>兩步合計,<b>一年約 <span class="pen num">${fmt(d.c1 + d.c2)}</span> 億元</b>。<br><span class="muted">這是只看收入推算的上限:沒算資產與同住子女的支持,實際需求會小很多。</span>`;
+  $('#ptab').innerHTML = `
+    <tr><td><b>第一階段</b></td><td>不再推算子女收入,只算子女實際給的錢;讓符合資格的人改領中低收入老人津貼(與國民年金、老農津貼擇一,政府只多付差額)</td><td>被隱藏的中低收入戶 ${d.n} 萬人<br><span class="muted">95% CI ${d.ni} 萬,n=${d.nn}</span></td><td class="num"><b>${d.c1} 億</b><br><span class="muted">${d.c1i} 億</span></td></tr>
+    <tr><td><b>第二階段</b></td><td>改領後仍低於最低生活費的,補到最低生活費(包含原本就有領補助的人)</td><td>仍不足者 ${d.n2} 萬人<br><span class="muted">n=${d.nn2}</span></td><td class="num"><b>${d.c2} 億</b><br><span class="muted">${d.c2i} 億</span></td></tr>`;
+  $('#scen').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === k));
+}
+$('#scen').addEventListener('click', e => { const b = e.target.closest('button'); if (b) cost(b.dataset.s); });
+cost('wide');
+
+/* ================= 翻牌 ================= */
+const CARDS = [
+  { t: '子女收入被算進來', f: `<p>97% 的長輩有全職工作的子女(n=1,465 人次)。依社會救助法第 5 條,子女不論是否同住都要列入計算。</p><p>想把子女排除,要經社工訪視評估,情況複雜時還得拿出法院判決:106 年依例外條款排除的 5,326 案中,有 308 案要附判決書。</p><p class="src">來源:監察院調查報告(2019)</p>`,
+    b: `<p><span class="flag">德國</span>2020 年起,子女年收入未超過 10 萬歐元,長輩申請老年基本生活保障時<b>完全不看子女</b>。絕大多數家庭因此不必再分擔。</p><p><span class="flag">韓國</span>2021 年 10 月起,生計給付取消「扶養義務者標準」,只有子女年收入超過 1 億韓元或財產超過 9 億韓元才排除,預估約 40 萬人新增為受給者。</p>`,
+    l: [['德國 SoVD 說明', 'https://www.sovd.de/fileadmin/downloads/sozial-infos/pdf/Sozial-Info-Angehoerigenentlastungsgesetz2020.pdf'], ['韓國福祉路公告', 'https://www.bokjiro.go.kr/ssis-tbu/cms/pc/customer/notice/1301752_1141.html']] },
+  { t: '沒有人主動來找', f: `<p>國民年金、老農津貼由勞保局發放;中低收入老人津貼則要長輩自己到區公所申請。兩邊不會互相通知。</p><p>我們的資料裡,沒有按月年金、付不出生活費的 183 人次中,<b>96% 沒有領到中低收入戶生活補助</b>。</p><p class="muted">問卷沒有直接問「中低收入老人生活津貼」,領津貼的人可能被算成沒領,所以這個比例只能當參考。</p>`,
+    b: `<p><span class="flag">韓國</span>2014 年「松坡三母女」事件:一家人在困境中過世,卻從未申請過補助。2015 年起,韓國建立<b>「福祉死角發掘系統」</b>,串接 18 個機關、34 種危機資訊(例如斷電、斷水、欠繳健保費),由系統主動找出可能需要幫助的家庭,通知地方政府上門。</p><p>本研究建議:由中央另開一個「長者生活補足專案」,用既有的年金與稅務資料主動篩選,而不是等長輩來申請。</p>`,
+    l: [['韓國保健社會研究院(KIHASA)', 'https://kihasa.re.kr/api/kihasa/file/download?seq=21997']] },
+  { t: '不好意思開口', f: `<p>申請補助,等於承認「我很窮」、「孩子沒在養我」。要被認定,得讓社工到家訪視,家裡的關係攤在別人面前。</p><p>有些家庭甚至走上法院:依法律扶助基金會統計,106 年「免除扶養義務之訴」達 3,100 件,是家事案件第一名。</p><p class="src">來源:監察院調查報告(2019)</p>`,
+    b: `<p><span class="flag">英國</span>英國的 Pension Credit 是補足長輩收入的制度,但符合資格的人只有約 <b>65%</b> 去申請,最多 76 萬戶沒領(2022/23 年度)。</p><p>英國政府的做法:持續推廣,並試辦<b>主動寄信邀請</b>可能符合資格的長輩申請,把「自己去求」變成「政府來問」。</p>`,
+    l: [['GOV.UK 申請率統計', 'https://www.gov.uk/government/statistics/income-related-benefits-estimates-of-take-up-financial-year-ending-2023/income-related-benefits-estimates-of-take-up-financial-year-ending-2023'], ['GOV.UK 邀請申請試辦', 'https://gov.uk/government/publications/pension-credit-invitation-to-claim-trial/423b0c09-59f4-48be-87cc-0bf70cae6a72']] },
+  { t: '有房子,不代表有錢', f: `<p>阿嬤住了一輩子的老房子,可能讓她的財產超過門檻。但房子不能拿來買菜。</p><p>反過來,也有長輩名下有好幾間房。我們的資料沒有問房地產,這是寬鬆估計可能高估的地方。</p>`,
+    b: `<p><span class="flag">澳洲</span>澳洲老年年金的資產審查<b>不計自住的房子</b>(以及房子所在的前 2 公頃土地);出租、空置或借人住的房子才算。</p><p>這樣分開「自住」和「其他房產」,既不會逼長輩賣掉自己住的房子,也能排除真正有資產的人。</p>`,
+    l: [['Services Australia:不動產資產', 'https://www.servicesaustralia.gov.au/individuals/services/centrelink/age-pension/who-can-get-it/assets-test/asset-types/real-estate-assets']] },
+];
+$('#cards').innerHTML = CARDS.map((c, i) => `
+  <button class="card" type="button" aria-pressed="false" aria-label="第 ${i + 1} 張卡:${c.t},點一下翻面">
+    <div class="in">
+      <div class="face2 front"><span class="no">關卡 0${i + 1}</span><h3>${c.t}</h3>${c.f}<span class="hint">你會怎麼解?點一下翻開 ↻</span></div>
+      <div class="face2 back"><span class="no">別國這樣做</span><h3>${c.t}</h3>${c.b}<p class="src">${c.l.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`).join(' · ')}</p></div>
+    </div>
+  </button>`).join('');
+$('#cards').addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  const c = e.target.closest('.card'); if (c) c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') !== 'true');
+});
+
+/* ================= 討論卡 ================= */
+$('#vote').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  $('#vote').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  $('#voteReveal').classList.add('on');
+});
+</script>
+</body>
+</html>

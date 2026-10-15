@@ -1,0 +1,8 @@
+# PSFD 原始資料不可公開
+data/*
+!data/README.md
+*.dta
+*.sav
+*.csv
+__pycache__/
+.ipynb_checkpoints/
